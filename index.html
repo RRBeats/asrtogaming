@@ -368,7 +368,7 @@
     .astronaut-chat {
       position: fixed;
       pointer-events: none;
-      z-index: 101; /* Above canvas and content */
+      z-index: 100; /* Same z-index as canvas/astronaut */ /* Above canvas and content */
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
@@ -630,42 +630,34 @@
     
     // Astronaut animation
     let astronaut = null;
-    let lastAstronautSpawn = 0;
-    const ASTRONAUT_SPAWN_INTERVAL = 45000; // 45 seconds in milliseconds
-    
+            
     function spawnAstronaut() {
-      const now = Date.now();
-      if (now - lastAstronautSpawn < ASTRONAUT_SPAWN_INTERVAL) {
-        return; // Not time yet
-      }
-      
-      lastAstronautSpawn = now;
+      // Only spawn if astronaut doesn't exist
+      if (astronaut) return;
       
       // Spawn from random edge
-      const edge = Math.floor(Math.random() * 4); // 0=left, 1=top, 2=right, 3=bottom
-      let x, y, angle, speed;
+      const edge = Math.floor(Math.random() * 4);
+      let x, y, angle;
       
-      if (edge === 0) { // Left to Right - start from very left edge
-        x = -100; // Start well off-screen left
-        y = h * 0.5; // Middle of screen height
-        angle = 0; // Straight right
-        speed = 0.5 + Math.random() * 0.1; // Slower speed for longer journey
-      } else if (edge === 1) { // Top to Bottom - start from very top edge
-        x = w * 0.5; // Middle of screen width
-        y = -100; // Start well off-screen top
-        angle = Math.PI / 2; // Straight down
-        speed = 0.5 + Math.random() * 0.1; // Slower speed for longer journey
-      } else if (edge === 2) { // Right to Left - start from very right edge
-        x = w + 100; // Start well off-screen right
-        y = h * 0.5; // Middle of screen height
-        angle = Math.PI; // Straight left
-        speed = 0.5 + Math.random() * 0.1; // Slower speed for longer journey
-      } else { // Bottom to Top - start from very bottom edge
-        x = w * 0.5; // Middle of screen width
-        y = h + 100; // Start well off-screen bottom
-        angle = -Math.PI / 2; // Straight up
-        speed = 0.5 + Math.random() * 0.1; // Slower speed for longer journey
+      if (edge === 0) { // Left
+        x = -100;
+        y = Math.random() * h;
+        angle = Math.random() * Math.PI * 2;
+      } else if (edge === 1) { // Top
+        x = Math.random() * w;
+        y = -100;
+        angle = Math.random() * Math.PI * 2;
+      } else if (edge === 2) { // Right
+        x = w + 100;
+        y = Math.random() * h;
+        angle = Math.random() * Math.PI * 2;
+      } else { // Bottom
+        x = Math.random() * w;
+        y = h + 100;
+        angle = Math.random() * Math.PI * 2;
       }
+      
+      const speed = 0.5 + Math.random() * 0.1;
       
       astronaut = {
         x: x,
@@ -673,86 +665,159 @@
         angle: angle,
         speed: speed,
         size: 25,
-        rotation: angle + Math.PI / 2, // Face direction of travel
+        rotation: angle + Math.PI / 2,
         life: 0,
-        maxLife: 5000 // How long to stay on screen (enough to cross whole page at slow speed)
+        maxLife: Infinity,
+        spinSpeed: 0.002
       };
       
-      // Reset chat bubble to "*PSST*" every time a new astronaut spawns
+      // Reset chat bubble
       const chatBubble = document.getElementById('astronautChat');
       if (chatBubble) {
         const chatText = chatBubble.querySelector('.chat-bubble');
         if (chatText) {
           chatText.textContent = '*PSST*';
         }
-        chatBubble.style.opacity = '0'; // Start hidden, will fade in
+        chatBubble.style.opacity = '0';
         chatBubble.classList.remove('active');
       }
     }
-    
+      
     function drawAstronaut() {
       if (!astronaut) return;
+      
+      // Load astronaut image if not already loaded
+      if (!drawAstronaut.astronautImage) {
+        drawAstronaut.astronautImage = new Image();
+        drawAstronaut.astronautImage.src = '/astronaut.png';
+        drawAstronaut.astronautImage.onload = function() {
+          // Image loaded, will draw on next frame
+        };
+      }
       
       ctx.save();
       ctx.translate(astronaut.x, astronaut.y);
       ctx.rotate(astronaut.rotation);
       
-      // Draw astronaut (simple spacesuit figure)
-      ctx.globalAlpha = 0.9;
-      
-      // Helmet (circle)
-      ctx.fillStyle = '#ffffff';
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = '#39c1ed';
-      ctx.beginPath();
-      ctx.arc(0, -8, 10, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      // Helmet visor (reflection)
-      ctx.fillStyle = '#39c1ed';
-      ctx.globalAlpha = 0.3;
-      ctx.beginPath();
-      ctx.arc(-3, -10, 6, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      // Body (rectangle)
-      ctx.globalAlpha = 0.9;
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(-6, 2, 12, 16);
-      
-      // Arms
-      ctx.fillRect(-10, 4, 4, 12);
-      ctx.fillRect(6, 4, 4, 12);
-      
-      // Legs
-      ctx.fillRect(-6, 18, 5, 10);
-      ctx.fillRect(1, 18, 5, 10);
-      
-      // Backpack
-      ctx.fillStyle = '#ad1fff';
-      ctx.fillRect(-8, 0, 6, 8);
-      
-      // Glow effect
-      ctx.globalAlpha = 0.3;
-      ctx.shadowBlur = 20;
-      ctx.shadowColor = '#39c1ed';
-      ctx.beginPath();
-      ctx.arc(0, 0, 20, 0, 2 * Math.PI);
-      ctx.fill();
+      // Draw astronaut image if loaded
+      if (drawAstronaut.astronautImage.complete && drawAstronaut.astronautImage.naturalWidth > 0) {
+        ctx.globalAlpha = 0.9;
+        // Scale image to appropriate size (astronaut.size is the desired size)
+        const scale = astronaut.size / 250; // Smaller scale for compact astronaut
+        const imgWidth = drawAstronaut.astronautImage.width * scale;
+        const imgHeight = drawAstronaut.astronautImage.height * scale;
+        
+        // Draw with glow effect
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#39c1ed';
+        ctx.drawImage(
+          drawAstronaut.astronautImage,
+          -imgWidth / 2,
+          -imgHeight / 2,
+          imgWidth,
+          imgHeight
+        );
+      } else {
+        // Fallback: draw simple shape if image not loaded yet
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#39c1ed';
+        ctx.beginPath();
+        ctx.arc(0, 0, astronaut.size / 2, 0, 2 * Math.PI);
+        ctx.fill();
+      }
       
       ctx.restore();
       
       // Update position
-      astronaut.x += Math.cos(astronaut.angle) * astronaut.speed;
-      astronaut.y += Math.sin(astronaut.angle) * astronaut.speed;
+      // Update position
+      // Slow continuous spin for zero-G effect
+      astronaut.rotation += astronaut.spinSpeed;
+      
+      // Zero-G drift: add small random angle changes for floating effect
+      if (Math.random() < 0.02) {
+        astronaut.angle += (Math.random() - 0.5) * 0.3;
+      }
+      // Add slight speed variation for more natural movement
+      const currentSpeed = astronaut.speed * (0.9 + Math.random() * 0.2);
+      
+      // Calculate new position
+      const newX = astronaut.x + Math.cos(astronaut.angle) * currentSpeed;
+      const newY = astronaut.y + Math.sin(astronaut.angle) * currentSpeed;
+      
+      // Bounce off screen edges
+      let finalX = newX;
+      let finalY = newY;
+      const margin = astronaut.size / 2;
+      
+      if (newX < margin) {
+        astronaut.angle = Math.PI - astronaut.angle;
+        finalX = margin;
+      } else if (newX > w - margin) {
+        astronaut.angle = Math.PI - astronaut.angle;
+        finalX = w - margin;
+      }
+      
+      if (newY < margin) {
+        astronaut.angle = -astronaut.angle;
+        finalY = margin;
+      } else if (newY > h - margin) {
+        astronaut.angle = -astronaut.angle;
+        finalY = h - margin;
+      }
+      
+      // Bounce off cards
+      const socialsBox = document.querySelector('.socials-box');
+      const serverCard = document.querySelector('.server-card') || document.querySelector('.minecraft-card');
+      
+      if (socialsBox) {
+        const rect = socialsBox.getBoundingClientRect();
+        if (finalX + margin > rect.left && finalX - margin < rect.right &&
+            finalY + margin > rect.top && finalY - margin < rect.bottom) {
+          const distLeft = Math.abs(finalX - rect.left);
+          const distRight = Math.abs(finalX - rect.right);
+          const distTop = Math.abs(finalY - rect.top);
+          const distBottom = Math.abs(finalY - rect.bottom);
+          const minDist = Math.min(distLeft, distRight, distTop, distBottom);
+          if (minDist === distLeft || minDist === distRight) {
+            astronaut.angle = Math.PI - astronaut.angle;
+          } else {
+            astronaut.angle = -astronaut.angle;
+          }
+          if (finalX < rect.left) finalX = rect.left - margin;
+          else if (finalX > rect.right) finalX = rect.right + margin;
+          if (finalY < rect.top) finalY = rect.top - margin;
+          else if (finalY > rect.bottom) finalY = rect.bottom + margin;
+        }
+      }
+      
+      if (serverCard) {
+        const rect = serverCard.getBoundingClientRect();
+        if (finalX + margin > rect.left && finalX - margin < rect.right &&
+            finalY + margin > rect.top && finalY - margin < rect.bottom) {
+          const distLeft = Math.abs(finalX - rect.left);
+          const distRight = Math.abs(finalX - rect.right);
+          const distTop = Math.abs(finalY - rect.top);
+          const distBottom = Math.abs(finalY - rect.bottom);
+          const minDist = Math.min(distLeft, distRight, distTop, distBottom);
+          if (minDist === distLeft || minDist === distRight) {
+            astronaut.angle = Math.PI - astronaut.angle;
+          } else {
+            astronaut.angle = -astronaut.angle;
+          }
+          if (finalX < rect.left) finalX = rect.left - margin;
+          else if (finalX > rect.right) finalX = rect.right + margin;
+          if (finalY < rect.top) finalY = rect.top - margin;
+          else if (finalY > rect.bottom) finalY = rect.bottom + margin;
+        }
+      }
+      
+      astronaut.x = finalX;
+      astronaut.y = finalY;
       astronaut.life++;
       
-      // Remove if off screen or max life reached
-      if (astronaut.life > astronaut.maxLife || 
-          astronaut.x < -150 || astronaut.x > w + 150 ||
-          astronaut.y < -150 || astronaut.y > h + 150) {
-        astronaut = null;
-      }
+      // Never remove - astronaut stays on screen
     }
     
     function updateChatBubble() {
@@ -760,14 +825,20 @@
       if (!chatBubble) return;
       
       if (astronaut) {
+        // Reset chat sequence every 45 seconds (1350 frames at 30fps)
+        const CHAT_RESET_INTERVAL = 1350; // 45 seconds
+        if (astronaut.life >= CHAT_RESET_INTERVAL) {
+          astronaut.life = 0; // Reset to restart chat sequence
+        }
+        
         // Position chat bubble above astronaut
         const bubbleX = astronaut.x;
-        const bubbleY = astronaut.y - 50; // Above the astronaut
+        const bubbleY = astronaut.y - 120; // Position well above head
         
         chatBubble.style.left = bubbleX + 'px';
         chatBubble.style.top = bubbleY + 'px';
         
-        // Change message based on astronaut's age
+        // Change message based on astronaut's age (life counter)
         const chatText = chatBubble.querySelector('.chat-bubble');
         if (chatText) {
           // First 480 frames (16 seconds at 30fps): show "*PSST*"
@@ -799,18 +870,18 @@
             chatBubble.style.opacity = String(1 - (astronaut.life - 1440) / 30); // Fade from 1 to 0
             chatBubble.classList.add('active');
           }
-          // After 1470 frames: hide chat bubble
+          // After 1470 frames: hide chat bubble until next cycle
           else {
             chatBubble.style.opacity = '0';
             chatBubble.classList.remove('active');
           }
         }
       } else {
-        chatBubble.classList.remove('active');
         chatBubble.style.opacity = '0';
+        chatBubble.classList.remove('active');
       }
     }
-
+          // Frames 480-510: fade out "*PSST*"
     function draw() {
       ctx.clearRect(0, 0, w, h);
       
@@ -1078,7 +1149,7 @@
       }
       
       // Draw astronaut
-      spawnAstronaut();
+      if (!astronaut) spawnAstronaut();
       drawAstronaut();
       updateChatBubble();
 
