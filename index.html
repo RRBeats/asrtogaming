@@ -31,7 +31,7 @@
     }
     .content {
       position: relative;
-      z-index: 2;
+      z-index: 101; /* Above canvas */
       padding: 20px;
       max-width: 700px;
       margin: 0 auto;
@@ -610,7 +610,7 @@
         {
           name: 'WASP-12',
           x: w * 0.5,
-          y: h * 0.65,
+          y: h * 0.9,  // Moved further down
           starColor: '#ff6347',
           starSize: 9,
           planets: [
@@ -1177,15 +1177,12 @@
     
     // Add click detection for solar systems
     function handleSolarSystemClick(event) {
-      console.log('Click detected on canvas!');
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       
-      console.log('Click coordinates:', x, y);
-      console.log('Number of solar systems:', solarSystems ? solarSystems.length : 'undefined');
-      
       // Check each solar system - only the star (sun) is clickable
+      let clickedSolarSystem = false;
       for (let system of solarSystems) {
         // Calculate distance from click to solar system center (where the star is)
         const dx = x - system.x;
@@ -1193,16 +1190,20 @@
         const distance = Math.sqrt(dx * dx + dy * dy);
         
         // Clickable radius - only the star itself with a small padding for easier clicking
-        // The star is drawn at system.starSize, so we make it slightly larger for clicking
         const clickableRadius = system.starSize * 2.5 + 15; // Star size * 2.5 + small padding
         
-        console.log(`Checking ${system.name}: distance=${distance.toFixed(1)}, clickableRadius=${clickableRadius.toFixed(1)}, system.x=${system.x.toFixed(1)}, system.y=${system.y.toFixed(1)}`);
-        
         if (distance <= clickableRadius) {
-          console.log(`Clicked on ${system.name}! Opening modal...`);
           openSolarModal(system.name);
+          clickedSolarSystem = true;
+          event.stopPropagation(); // Prevent click from passing through
           break; // Only open one modal per click
         }
+      }
+      
+      // If no solar system was clicked, allow the click to pass through to content below
+      if (!clickedSolarSystem) {
+        // Don't stop propagation - let the click go through to content
+        return false;
       }
     }
     
