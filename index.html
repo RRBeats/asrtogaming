@@ -677,6 +677,17 @@
         life: 0,
         maxLife: 5000 // How long to stay on screen (enough to cross whole page at slow speed)
       };
+      
+      // Reset chat bubble to "*PSST*" every time a new astronaut spawns
+      const chatBubble = document.getElementById('astronautChat');
+      if (chatBubble) {
+        const chatText = chatBubble.querySelector('.chat-bubble');
+        if (chatText) {
+          chatText.textContent = '*PSST*';
+        }
+        chatBubble.style.opacity = '0'; // Start hidden, will fade in
+        chatBubble.classList.remove('active');
+      }
     }
     
     function drawAstronaut() {
@@ -762,6 +773,7 @@
           // First 480 frames (16 seconds at 30fps): show "*PSST*"
           if (astronaut.life < 480) {
             chatText.textContent = '*PSST*';
+            chatBubble.style.opacity = '1'; // Ensure fully visible
             chatBubble.classList.add('active');
           }
           // Frames 480-510: fade out "*PSST*"
@@ -775,11 +787,22 @@
             chatBubble.style.opacity = String((astronaut.life - 510) / 30); // Fade from 0 to 1
             chatBubble.classList.add('active');
           }
-          // After 540 frames: show "Click a Sun" normally
-          else {
+          // Frames 540-1440: show "Click a Sun" normally (30 seconds)
+          else if (astronaut.life < 1440) {
             chatText.textContent = 'Click a Sun';
             chatBubble.style.opacity = '1';
             chatBubble.classList.add('active');
+          }
+          // Frames 1440-1470: fade out "Click a Sun" (1 second)
+          else if (astronaut.life < 1470) {
+            chatText.textContent = 'Click a Sun';
+            chatBubble.style.opacity = String(1 - (astronaut.life - 1440) / 30); // Fade from 1 to 0
+            chatBubble.classList.add('active');
+          }
+          // After 1470 frames: hide chat bubble
+          else {
+            chatBubble.style.opacity = '0';
+            chatBubble.classList.remove('active');
           }
         }
       } else {
