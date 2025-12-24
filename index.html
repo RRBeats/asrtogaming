@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Asrto Gaming Space</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:700|Montserrat:400,600&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: #e0e6ff;
+      min-height: 100vh;
+      background: #000000;
+      position: relative;
+    }
+    .stars {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: auto; /* Changed to auto to allow clicks on solar systems */
+      z-index: 100; /* Above content, below modals */
+      display: block;
+      cursor: pointer; /* Show pointer cursor to indicate clickability */
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      padding: 30px 0 15px 0;
+    }
+    .space-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8em;
+      background: linear-gradient(90deg, #ad1fff 10%, #0fffcf 90%);
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      margin-bottom: 0.15em;
+      letter-spacing: 4px;
+    }
+    /* Socials box and title now match MC Server styling */
+    .socials-box {
+      background: rgba(18, 8, 40, 0.93);
+      border: 2px solid #393780;
+      box-shadow: 0 0 22px 3px #ad1fff44;
+      border-radius: 22px;
+      margin: 0 auto 40px auto;
+      padding: 24px 28px;
+      max-width: 800px;
+      text-align: center;
+    }
+    .socials-title {
+      color: #ad1fff;
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 1.5em;
+      letter-spacing: 1.5px;
+      margin-bottom: 17px;
+      background: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+    }
+    .social-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 5px;
+    }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 32px;
+      min-width: 120px;
+      font-size: 1.10em;
+      font-weight: 600;
+      border-radius: 28px;
+      background: linear-gradient(90deg, rgba(132, 68, 230, 0.25) 30%, rgba(57, 193, 237, 0.25) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.2s, transform 0.21s;
+      box-shadow: 0 2px 16px 0 rgba(30, 32, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(173, 31, 255, 0.6);
+      cursor: pointer;
+      margin: 0 4px 0 4px;
+    }
+    .social-btn.twitch {
+      background: linear-gradient(90deg, rgba(145, 71, 255, 0.25) 50%, rgba(100, 65, 165, 0.25) 100%);
+      border-color: rgba(145, 71, 255, 0.7);
+    }
+    .social-btn.tiktok {
+      background: linear-gradient(90deg, rgba(28, 28, 28, 0.3) 30%, rgba(0, 242, 234, 0.25) 70%, rgba(255, 0, 80, 0.25) 100%);
+      border-color: rgba(0, 242, 234, 0.7);
+    }
+    .social-btn.discord {
+      background: linear-gradient(90deg, rgba(114, 137, 218, 0.25) 40%, rgba(48, 65, 140, 0.25) 100%);
+      border-color: rgba(114, 137, 218, 0.7);
+    }
+    .social-btn:hover {
+      background: linear-gradient(90deg, rgba(132, 68, 230, 0.35) 30%, rgba(57, 193, 237, 0.35) 100%);
+      border-color: rgba(173, 31, 255, 0.9);
+      transform: scale(1.07);
+      box-shadow: 0 4px 24px 0 rgba(173, 31, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .social-btn.twitch:hover {
+      background: linear-gradient(90deg, rgba(145, 71, 255, 0.35) 50%, rgba(100, 65, 165, 0.35) 100%);
+      border-color: rgba(145, 71, 255, 0.9);
+    }
+    .social-btn.tiktok:hover {
+      background: linear-gradient(90deg, rgba(28, 28, 28, 0.4) 30%, rgba(0, 242, 234, 0.35) 70%, rgba(255, 0, 80, 0.35) 100%);
+      border-color: rgba(0, 242, 234, 0.9);
+    }
+    .social-btn.discord:hover {
+      background: linear-gradient(90deg, rgba(114, 137, 218, 0.35) 40%, rgba(48, 65, 140, 0.35) 100%);
+      border-color: rgba(114, 137, 218, 0.9);
+    }
+    .mc-panel {
+      background: rgba(18, 8, 40, 0.93);
+      border: 2px solid #393780;
+      box-shadow: 0 0 22px 3px #ad1fff44;
+      border-radius: 22px;
+      padding: 24px 28px;
+      margin: 0 auto 22px;
+      max-width: 500px;
+    }
+    .mc-title {
+      color: #ad1fff;
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 1.5em;
+      letter-spacing: 1.5px;
+    }
+    .mc-info {
+      margin: 15px 0 12px 0;
+      font-size: 1.05em;
+      color: #e0e0fb;
+      line-height: 1.7;
+    }
+    .datapack-link {
+      color: #ad1fff;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .datapack-link:hover {
+      color: #39c1ed;
+    }
+    /* Modal styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: rgba(18, 8, 40, 0.98);
+      border: 2px solid #ad1fff;
+      box-shadow: 0 0 40px 8px #ad1fff99;
+      border-radius: 26px;
+      padding: 32px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1001;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .modal-title {
+      color: #ad1fff;
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 1.8em;
+      letter-spacing: 1.5px;
+      margin: 0;
+    }
+    .modal-close {
+      background: linear-gradient(90deg, rgba(132, 68, 230, 0.25) 30%, rgba(57, 193, 237, 0.25) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 2px solid rgba(173, 31, 255, 0.6);
+      color: #ad1fff;
+      font-size: 1.5em;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+      line-height: 1;
+      box-shadow: 0 2px 8px 0 rgba(30, 32, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    .modal-close:hover {
+      background: linear-gradient(90deg, rgba(132, 68, 230, 0.35) 30%, rgba(57, 193, 237, 0.35) 100%);
+      border-color: rgba(173, 31, 255, 0.9);
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 16px 0 rgba(173, 31, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .datapacks {
+      background: rgba(16,9,34,0.82);
+      border-radius: 18px;
+      padding: 20px 16px 14px 30px;
+      box-shadow: 0 0 12px 0 #8836d566;
+    }
+    .datapacks-title {
+      font-weight: 700;
+      font-size: 1.1em;
+      color: #7feeff;
+      margin-bottom: 7px;
+    }
+    .datapacks ul {
+      list-style-type: disc;
+      padding-left: 25px;
+      margin: 0;
+      color: #aabfff;
+      font-size: 1.1em;
+    }
+    .datapacks li {
+      margin-bottom: 7px;
+    }
+    /* Solar System Modal styles */
+    .solar-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      backdrop-filter: blur(6px);
+    }
+    .solar-modal-overlay.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .solar-modal-content {
+      background: rgba(18, 8, 40, 0.98);
+      border: 2px solid #ad1fff;
+      box-shadow: 0 0 50px 10px #ad1fff99;
+      border-radius: 26px;
+      padding: 32px;
+      max-width: 700px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1001;
+    }
+    .solar-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .solar-modal-title {
+      color: #ad1fff;
+      font-family: 'Orbitron', Arial, sans-serif;
+      font-size: 2em;
+      letter-spacing: 1.5px;
+      margin: 0;
+    }
+    .solar-modal-close {
+      background: linear-gradient(90deg, rgba(132, 68, 230, 0.25) 30%, rgba(57, 193, 237, 0.25) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 2px solid rgba(173, 31, 255, 0.6);
+      color: #ad1fff;
+      font-size: 1.5em;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+      line-height: 1;
+      box-shadow: 0 2px 8px 0 rgba(30, 32, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    .solar-modal-close:hover {
+      background: linear-gradient(90deg, rgba(132, 68, 230, 0.35) 30%, rgba(57, 193, 237, 0.35) 100%);
+      border-color: rgba(173, 31, 255, 0.9);
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 16px 0 rgba(173, 31, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .solar-info {
+      color: #e0e0fb;
+      line-height: 1.8;
+    }
+    .solar-info-section {
+      margin-bottom: 20px;
+    }
+    .solar-info-label {
+      color: #ad1fff;
+      font-weight: 600;
+      font-size: 1.1em;
+      margin-bottom: 8px;
+    }
+    .solar-info-value {
+      color: #aabfff;
+      font-size: 1.05em;
+    }
+    .solar-planets-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .solar-planets-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(173, 31, 255, 0.2);
+      color: #aabfff;
+    }
+    .solar-planets-list li:last-child {
+      border-bottom: none;
+    }
+    .solar-facts {
+      list-style: disc;
+      padding-left: 25px;
+      color: #aabfff;
+    }
+    .solar-facts li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+        @media (max-width: 900px) {
+      .social-buttons {flex-direction: column;gap: 14px;}
+    }
+    @media (max-width: 700px) {
+      .mc-panel, .content {max-width: 98vw;padding: 6vw 2vw;}
+    }
+      /* Astronaut chat bubble */
+    .astronaut-chat {
+      position: fixed;
+      pointer-events: none;
+      z-index: 101; /* Above canvas and content */
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    .astronaut-chat.active {
+      opacity: 1;
+    }
+    .chat-bubble {
+      background: rgba(18, 8, 40, 0.95);
+      border: 2px solid #ad1fff;
+      border-radius: 20px;
+      padding: 12px 18px;
+      color: #e0e0fb;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 4px 20px rgba(173, 31, 255, 0.4);
+      position: relative;
+      white-space: nowrap;
+    }
+    .chat-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 20px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid #ad1fff;
+    }
+    .chat-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 21px;
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid rgba(18, 8, 40, 0.95);
+    }
+
+  </style>
+</head>
+<body>
+  <canvas class="stars"></canvas>
+  <div class="content">
+    <header>
+      <div class="space-title">Asrto Gaming Space</div>
+      <div style="font-size:1.15em;font-weight:600;color:#d18bff;">A place among the stars</div>
+    </header>
+    <section class="socials-box">
+      <div class="socials-title">Socials</div>
+      <div class="social-buttons">
+        <a href="https://www.twitch.tv/asrto_x" class="social-btn twitch" target="_blank">Twitch</a>
+        <a href="https://www.tiktok.com/@asrto_x" class="social-btn tiktok" target="_blank">TikTok</a>
+        <a href="https://discord.gg/VCAqXewFZJ" class="social-btn discord" target="_blank">Discord</a>
+      </div>
+    </section>
+    <section class="mc-panel">
+      <div class="mc-title">Minecraft Server</div>
+      <div class="mc-info">
+        <b>IP:</b> mc.asrto.playit.gg<br/>
+        <b>Version:</b> 1.21.10<br/>
+        <b>Difficulty:</b> Hard<br/>
+        <b>Type:</b> Vanilla with <span class="datapack-link" onclick="openDatapackModal()">Datapacks</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- Datapacks Modal -->
+  <div class="modal-overlay" id="datapackModal" onclick="closeDatapackModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Datapacks</h2>
+        <button class="modal-close" onclick="closeDatapackModal()" aria-label="Close">&times;</button>
+      </div>
+      <div class="datapacks">
+        <div class="datapacks-title">Installed Datapacks:</div>
+        <ul>
+          <li>Furnicraft</li>
+          <li>Named Villager</li>
+          <li>Silk Spawners</li>
+          <li>Structory</li>
+          <li>Structory Towers</li>
+          <li>Vanilla Refresh</li>
+          <li>Vanilla Tweaks</li>
+          <li>Armor Statues</li>
+          <li>Costom Nether Portals</li>
+          <li>Durability Ping</li>
+          <li>Fast Leaf Decay</li>
+          <li>Homes</li>
+          <li>More Mod Heads</li>
+          <li>Name Colors</li>
+          <li>Player head drops</li>
+          <li>Silk touch budding amethsyst</li>
+          <li>Timber</li>
+          <li>TPA</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Modal functions
+    function openDatapackModal() {
+      document.getElementById('datapackModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeDatapackModal(event) {
+      if (event && event.target === event.currentTarget || !event) {
+        document.getElementById('datapackModal').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeDatapackModal();
+      }
+    });
+    // Fixed and improved stars and shooting stars rendering
+    const canvas = document.querySelector('.stars');
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    let stars = [], shootingStars = [];
+    
+    function resize() {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      // Clear shooting stars on resize
+      shootingStars = [];
+      // Regenerate stars to fill the new window size
+      makeStars(130);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    // Create stars
+    function makeStars(count) {
+      stars = [];
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.3 + 0.4,
+          o: Math.random() * 0.5 + 0.5,
+          speed: Math.random() * 0.08 + 0.01,
+          twinkle: Math.random() * 100
+        });
+      }
+    }
+    makeStars(130);
+    function spawnShootingStar() {
+      if (Math.random() < 0.012) {
+        // Pick a random edge for the start (0=left, 1=top, 2=right, 3=bottom)
+        const edge = Math.floor(Math.random()*4);
+        let x, y, angle;
+        if (edge === 0) { // Left
+          x = -50; y = Math.random() * h; angle = Math.random() * (Math.PI/2) - Math.PI/4; // -45deg to +45deg
+        } else if (edge === 1) { // Top
+          x = Math.random() * w; y = -50; angle = Math.PI/4 + Math.random() * (Math.PI/2); // 45 to 135 deg
+        } else if (edge === 2) { // Right
+          x = w+50; y = Math.random() * h; angle = Math.PI + Math.random() * (Math.PI/2) - Math.PI/4; // 135 to 225deg
+        } else { // Bottom
+          x = Math.random() * w; y = h+50; angle = -Math.PI/4 - Math.random() * (Math.PI/2); // -45 to -135deg
+        }
+        shootingStars.push({
+          x, y,
+          len: Math.random() * 150 + 180,  // Longer tails for more realistic meteors
+          angle,
+          speed: Math.random() * 10 + 8,  // Slightly faster
+          alpha: 1.0,  // Start fully visible
+          life: 0,
+          width: Math.random() * 1.2 + 1.8,  // Slightly thinner for more realistic look
+          color: Math.random() < 0.5 ? '#ad1fff' : '#39c1ed'
+        });
+      }
+    }
+    // Initialize real solar systems (viewed from afar)
+    let solarSystems = [];
+    function initSolarSystems() {
+      solarSystems = [
+        {
+          name: 'Trappist-1',
+          x: w * 0.15,
+          y: h * 0.2,
+          starColor: '#ff6b47',
+          starSize: 6,
+          planets: [
+            { distance: 20, size: 1.5, color: '#4a90e2', speed: 0.002, angle: 0 },
+            { distance: 28, size: 1.6, color: '#5ba3f5', speed: 0.0018, angle: 1.2 },
+            { distance: 35, size: 1.4, color: '#6bb6ff', speed: 0.0015, angle: 2.4 }
+          ]
+        },
+        {
+          name: 'HR 8799',
+          x: w * 0.85,
+          y: h * 0.25,
+          starColor: '#fff8dc',
+          starSize: 8,
+          planets: [
+            { distance: 30, size: 2.2, color: '#d4a574', speed: 0.0015, angle: 0 },
+            { distance: 42, size: 2.5, color: '#c89664', speed: 0.0012, angle: 1.5 },
+            { distance: 55, size: 2.3, color: '#bc8754', speed: 0.001, angle: 3.0 },
+            { distance: 68, size: 2.7, color: '#b07844', speed: 0.0008, angle: 4.5 }
+          ]
+        },
+        {
+          name: 'Kepler-90',
+          x: w * 0.25,
+          y: h * 0.75,
+          starColor: '#ffd700',
+          starSize: 7,
+          planets: [
+            { distance: 24, size: 2.0, color: '#8b7355', speed: 0.002, angle: 0 },
+            { distance: 32, size: 2.2, color: '#9b8365', speed: 0.0017, angle: 0.8 },
+            { distance: 42, size: 1.8, color: '#ab9375', speed: 0.0014, angle: 1.6 },
+            { distance: 52, size: 2.0, color: '#bba385', speed: 0.0012, angle: 2.4 },
+            { distance: 62, size: 2.3, color: '#cbb395', speed: 0.001, angle: 3.2 }
+          ]
+        },
+        {
+          name: '55 Cancri',
+          x: w * 0.75,
+          y: h * 0.7,
+          starColor: '#ffa500',
+          starSize: 6.5,
+          planets: [
+            { distance: 26, size: 2.2, color: '#4a4a4a', speed: 0.0018, angle: 0 },
+            { distance: 36, size: 2.5, color: '#5a5a5a', speed: 0.0015, angle: 1.3 },
+            { distance: 48, size: 2.0, color: '#6a6a6a', speed: 0.0012, angle: 2.6 },
+            { distance: 60, size: 2.7, color: '#7a7a7a', speed: 0.001, angle: 3.9 },
+            { distance: 72, size: 3.0, color: '#8a8a8a', speed: 0.0008, angle: 5.2 }
+          ]
+        },
+        {
+          name: 'WASP-12',
+          x: w * 0.5,
+          y: h * 0.65,
+          starColor: '#ff6347',
+          starSize: 9,
+          planets: [
+            { distance: 18, size: 3.5, color: '#2c2c2c', speed: 0.0025, angle: 0 },
+            { distance: 30, size: 2.5, color: '#3c3c3c', speed: 0.0018, angle: 1.8 }
+          ]
+        }
+      ];
+    }
+    
+    // Initialize solar systems on page load
+    initSolarSystems();
+    // Reposition solar systems on window resize
+    window.addEventListener('resize', function() {
+      initSolarSystems();
+    });
+    
+    // Astronaut animation
+    let astronaut = null;
+    let lastAstronautSpawn = 0;
+    const ASTRONAUT_SPAWN_INTERVAL = 45000; // 45 seconds in milliseconds
+    
+    function spawnAstronaut() {
+      const now = Date.now();
+      if (now - lastAstronautSpawn < ASTRONAUT_SPAWN_INTERVAL) {
+        return; // Not time yet
+      }
+      
+      lastAstronautSpawn = now;
+      
+      // Spawn from random edge
+      const edge = Math.floor(Math.random() * 4); // 0=left, 1=top, 2=right, 3=bottom
+      let x, y, angle, speed;
+      
+      if (edge === 0) { // Left to Right - start from very left edge
+        x = -100; // Start well off-screen left
+        y = h * 0.5; // Middle of screen height
+        angle = 0; // Straight right
+        speed = 0.5 + Math.random() * 0.1; // Slower speed for longer journey
+      } else if (edge === 1) { // Top to Bottom - start from very top edge
+        x = w * 0.5; // Middle of screen width
+        y = -100; // Start well off-screen top
+        angle = Math.PI / 2; // Straight down
+        speed = 0.5 + Math.random() * 0.1; // Slower speed for longer journey
+      } else if (edge === 2) { // Right to Left - start from very right edge
+        x = w + 100; // Start well off-screen right
+        y = h * 0.5; // Middle of screen height
+        angle = Math.PI; // Straight left
+        speed = 0.5 + Math.random() * 0.1; // Slower speed for longer journey
+      } else { // Bottom to Top - start from very bottom edge
+        x = w * 0.5; // Middle of screen width
+        y = h + 100; // Start well off-screen bottom
+        angle = -Math.PI / 2; // Straight up
+        speed = 0.5 + Math.random() * 0.1; // Slower speed for longer journey
+      }
+      
+      astronaut = {
+        x: x,
+        y: y,
+        angle: angle,
+        speed: speed,
+        size: 25,
+        rotation: angle + Math.PI / 2, // Face direction of travel
+        life: 0,
+        maxLife: 5000 // How long to stay on screen (enough to cross whole page at slow speed)
+      };
+    }
+    
+    function drawAstronaut() {
+      if (!astronaut) return;
+      
+      ctx.save();
+      ctx.translate(astronaut.x, astronaut.y);
+      ctx.rotate(astronaut.rotation);
+      
+      // Draw astronaut (simple spacesuit figure)
+      ctx.globalAlpha = 0.9;
+      
+      // Helmet (circle)
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = '#39c1ed';
+      ctx.beginPath();
+      ctx.arc(0, -8, 10, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Helmet visor (reflection)
+      ctx.fillStyle = '#39c1ed';
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.arc(-3, -10, 6, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Body (rectangle)
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-6, 2, 12, 16);
+      
+      // Arms
+      ctx.fillRect(-10, 4, 4, 12);
+      ctx.fillRect(6, 4, 4, 12);
+      
+      // Legs
+      ctx.fillRect(-6, 18, 5, 10);
+      ctx.fillRect(1, 18, 5, 10);
+      
+      // Backpack
+      ctx.fillStyle = '#ad1fff';
+      ctx.fillRect(-8, 0, 6, 8);
+      
+      // Glow effect
+      ctx.globalAlpha = 0.3;
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = '#39c1ed';
+      ctx.beginPath();
+      ctx.arc(0, 0, 20, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.restore();
+      
+      // Update position
+      astronaut.x += Math.cos(astronaut.angle) * astronaut.speed;
+      astronaut.y += Math.sin(astronaut.angle) * astronaut.speed;
+      astronaut.life++;
+      
+      // Remove if off screen or max life reached
+      if (astronaut.life > astronaut.maxLife || 
+          astronaut.x < -150 || astronaut.x > w + 150 ||
+          astronaut.y < -150 || astronaut.y > h + 150) {
+        astronaut = null;
+      }
+    }
+    
+    function updateChatBubble() {
+      const chatBubble = document.getElementById('astronautChat');
+      if (!chatBubble) return;
+      
+      if (astronaut) {
+        // Position chat bubble above astronaut
+        const bubbleX = astronaut.x;
+        const bubbleY = astronaut.y - 50; // Above the astronaut
+        
+        chatBubble.style.left = bubbleX + 'px';
+        chatBubble.style.top = bubbleY + 'px';
+        
+        // Change message based on astronaut's age
+        const chatText = chatBubble.querySelector('.chat-bubble');
+        if (chatText) {
+          // First 480 frames (16 seconds at 30fps): show "*PSST*"
+          if (astronaut.life < 480) {
+            chatText.textContent = '*PSST*';
+            chatBubble.classList.add('active');
+          }
+          // Frames 480-510: fade out "*PSST*"
+          else if (astronaut.life < 510) {
+            chatBubble.style.opacity = String(1 - (astronaut.life - 480) / 30); // Fade from 1 to 0
+            chatText.textContent = '*PSST*';
+          }
+          // Frames 510-540: fade in with "Click a Sun"
+          else if (astronaut.life < 540) {
+            chatText.textContent = 'Click a Sun';
+            chatBubble.style.opacity = String((astronaut.life - 510) / 30); // Fade from 0 to 1
+            chatBubble.classList.add('active');
+          }
+          // After 540 frames: show "Click a Sun" normally
+          else {
+            chatText.textContent = 'Click a Sun';
+            chatBubble.style.opacity = '1';
+            chatBubble.classList.add('active');
+          }
+        }
+      } else {
+        chatBubble.classList.remove('active');
+        chatBubble.style.opacity = '0';
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      
+      // Draw solar systems (behind stars, viewed from afar)
+      for (let system of solarSystems) {
+        ctx.save();
+        ctx.translate(system.x, system.y);
+        
+        // Draw star with subtle glow (distant view)
+        ctx.globalAlpha = 0.6;
+        const starGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, system.starSize * 2.5);
+        starGradient.addColorStop(0, system.starColor);
+        starGradient.addColorStop(0.4, system.starColor + 'aa');
+        starGradient.addColorStop(1, system.starColor + '00');
+        
+        ctx.fillStyle = starGradient;
+        ctx.beginPath();
+        ctx.arc(0, 0, system.starSize * 2.5, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw bright star core
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = system.starColor;
+        ctx.beginPath();
+        ctx.arc(0, 0, system.starSize, 0, 2 * Math.PI);
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = system.starColor;
+        ctx.fill();
+        
+        // Draw planets orbiting (small, distant view)
+        for (let planet of system.planets) {
+          planet.angle += planet.speed;
+          const planetX = Math.cos(planet.angle) * planet.distance;
+          const planetY = Math.sin(planet.angle) * planet.distance;
+          
+          // Draw planet with subtle glow
+          ctx.globalAlpha = 0.7;
+          ctx.fillStyle = planet.color;
+          ctx.beginPath();
+          ctx.arc(planetX, planetY, planet.size, 0, 2 * Math.PI);
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = planet.color;
+          ctx.fill();
+          
+          // Very faint orbit trail (barely visible from afar)
+          ctx.globalAlpha = 0.05;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 0.3;
+          ctx.beginPath();
+          ctx.arc(0, 0, planet.distance, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+        
+        ctx.restore();
+      }
+      
+      
+      // Draw solar systems (behind stars, viewed from afar)
+      for (let system of solarSystems) {
+        ctx.save();
+        ctx.translate(system.x, system.y);
+        
+        // Draw star with subtle glow (distant view)
+        ctx.globalAlpha = 0.6;
+        const starGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, system.starSize * 2.5);
+        starGradient.addColorStop(0, system.starColor);
+        starGradient.addColorStop(0.4, system.starColor + 'aa');
+        starGradient.addColorStop(1, system.starColor + '00');
+        
+        ctx.fillStyle = starGradient;
+        ctx.beginPath();
+        ctx.arc(0, 0, system.starSize * 2.5, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw bright star core (smaller for distant view)
+        ctx.globalAlpha = 0.7;
+        ctx.fillStyle = system.starColor;
+        ctx.beginPath();
+        ctx.arc(0, 0, system.starSize, 0, 2 * Math.PI);
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = system.starColor;
+        ctx.fill();
+        
+        // Draw planets orbiting (small, distant view)
+        for (let planet of system.planets) {
+          planet.angle += planet.speed;
+          const planetX = Math.cos(planet.angle) * planet.distance;
+          const planetY = Math.sin(planet.angle) * planet.distance;
+          
+          // Draw planet with subtle glow
+          ctx.globalAlpha = 0.6;
+          ctx.fillStyle = planet.color;
+          ctx.beginPath();
+          ctx.arc(planetX, planetY, planet.size, 0, 2 * Math.PI);
+          ctx.shadowBlur = 5;
+          ctx.shadowColor = planet.color;
+          ctx.fill();
+          
+          // Very faint orbit trail (barely visible from afar)
+          ctx.globalAlpha = 0.03;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 0.2;
+          ctx.beginPath();
+          ctx.arc(0, 0, planet.distance, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+        
+        ctx.restore();
+      }
+      
+      
+      // Draw solar systems (behind stars, viewed from afar)
+      for (let system of solarSystems) {
+        ctx.save();
+        ctx.translate(system.x, system.y);
+        
+        // Draw star with subtle glow (distant view)
+        ctx.globalAlpha = 0.6;
+        const starGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, system.starSize * 2.5);
+        starGradient.addColorStop(0, system.starColor);
+        starGradient.addColorStop(0.4, system.starColor + 'aa');
+        starGradient.addColorStop(1, system.starColor + '00');
+        
+        ctx.fillStyle = starGradient;
+        ctx.beginPath();
+        ctx.arc(0, 0, system.starSize * 2.5, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw bright star core (smaller for distant view)
+        ctx.globalAlpha = 0.7;
+        ctx.fillStyle = system.starColor;
+        ctx.beginPath();
+        ctx.arc(0, 0, system.starSize, 0, 2 * Math.PI);
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = system.starColor;
+        ctx.fill();
+        
+        // Draw planets orbiting (small, distant view)
+        for (let planet of system.planets) {
+          planet.angle += planet.speed;
+          const planetX = Math.cos(planet.angle) * planet.distance;
+          const planetY = Math.sin(planet.angle) * planet.distance;
+          
+          // Draw planet with subtle glow
+          ctx.globalAlpha = 0.6;
+          ctx.fillStyle = planet.color;
+          ctx.beginPath();
+          ctx.arc(planetX, planetY, planet.size, 0, 2 * Math.PI);
+          ctx.shadowBlur = 5;
+          ctx.shadowColor = planet.color;
+          ctx.fill();
+          
+          // Very faint orbit trail (barely visible from afar)
+          ctx.globalAlpha = 0.03;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 0.2;
+          ctx.beginPath();
+          ctx.arc(0, 0, planet.distance, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+        
+        ctx.restore();
+      }
+      
+      // Draw stars
+      for (let s of stars) {
+        ctx.save();
+        ctx.globalAlpha = s.o * (0.85+0.45*Math.sin((s.twinkle += s.speed) / 6));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, 2*Math.PI);
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = Math.random()<.5?'#ad1fff':'#39c1ed';
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.restore();
+      }
+      // Shooting stars - realistic meteors
+      for (let i = shootingStars.length-1; i >= 0; i--) {
+        let s = shootingStars[i];
+        ctx.save();
+        
+        // Calculate head and tail positions
+        const headX = s.x;
+        const headY = s.y;
+        const tailX = s.x - Math.cos(s.angle) * s.len;
+        const tailY = s.y - Math.sin(s.angle) * s.len;
+        
+        // Draw the tail with a realistic gradient (bright white/yellow at head, fading to transparent)
+        const tailGradient = ctx.createLinearGradient(headX, headY, tailX, tailY);
+        tailGradient.addColorStop(0, '#ffffff');  // Bright white at head
+        tailGradient.addColorStop(0.1, '#ffffaa');  // Yellow-white
+        tailGradient.addColorStop(0.2, s.color);  // Colored
+        tailGradient.addColorStop(0.5, s.color + 'cc');  // Fading
+        tailGradient.addColorStop(0.8, s.color + '66');  // More fading
+        tailGradient.addColorStop(1, s.color + '00');  // Transparent at tail
+        
+        // Draw the main tail with varying width (thicker near head, thinner at tail)
+        ctx.globalAlpha = s.alpha;
+        ctx.strokeStyle = tailGradient;
+        ctx.lineWidth = s.width * 1.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = s.color;
+        ctx.beginPath();
+        ctx.moveTo(headX, headY);
+        ctx.lineTo(tailX, tailY);
+        ctx.stroke();
+        
+        // Draw additional tail layers for depth (wider, more transparent)
+        ctx.globalAlpha = s.alpha * 0.4;
+        ctx.lineWidth = s.width * 2.5;
+        ctx.stroke();
+        
+        ctx.globalAlpha = s.alpha * 0.2;
+        ctx.lineWidth = s.width * 4;
+        ctx.stroke();
+        
+        // Draw bright glowing meteor head (white/yellow core)
+        ctx.globalAlpha = Math.min(s.alpha * 1.3, 1.0);
+        const headGradient = ctx.createRadialGradient(headX, headY, 0, headX, headY, s.width * 4);
+        headGradient.addColorStop(0, '#ffffff');  // Bright white core
+        headGradient.addColorStop(0.3, '#ffffaa');  // Yellow-white
+        headGradient.addColorStop(0.6, s.color);  // Colored glow
+        headGradient.addColorStop(1, s.color + '00');  // Transparent
+        ctx.fillStyle = headGradient;
+        ctx.beginPath();
+        ctx.arc(headX, headY, s.width * 3.5, 0, 2 * Math.PI);
+        ctx.shadowBlur = 30;
+        ctx.shadowColor = '#ffffff';
+        ctx.fill();
+        
+        // Draw intense white core
+        ctx.globalAlpha = Math.min(s.alpha * 1.5, 1.0);
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(headX, headY, s.width * 1.5, 0, 2 * Math.PI);
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#ffffff';
+        ctx.fill();
+        
+        // Add trailing particles for realism
+        for (let p = 0; p < 5; p++) {
+          const particleDist = (p + 1) * (s.len / 6);
+          const particleX = headX - Math.cos(s.angle) * particleDist;
+          const particleY = headY - Math.sin(s.angle) * particleDist;
+          const particleSize = (s.width * 0.8) * (1 - p * 0.15);
+          const particleAlpha = s.alpha * 0.5 * (1 - p * 0.2);
+          
+          ctx.globalAlpha = particleAlpha;
+          ctx.fillStyle = s.color;
+          ctx.beginPath();
+          ctx.arc(particleX, particleY, particleSize, 0, 2 * Math.PI);
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = s.color;
+          ctx.fill();
+        }
+        
+        ctx.restore();
+        // Move
+        s.x += Math.cos(s.angle) * s.speed;
+        s.y += Math.sin(s.angle) * s.speed;
+        s.life += 1; s.alpha *= 0.97;
+        if (s.life > 96 || s.alpha < 0.07 || s.x > w+100 || s.y > h+40) shootingStars.splice(i, 1);
+      }
+      
+      // Draw astronaut
+      spawnAstronaut();
+      drawAstronaut();
+      updateChatBubble();
+
+      spawnShootingStar();
+      requestAnimationFrame(draw);
+    }
+
+    // Solar system information data
+    const solarSystemData = {
+      'Trappist-1': {
+        lightYears: '40.7',
+        planets: ['Trappist-1b', 'Trappist-1c', 'Trappist-1d', 'Trappist-1e', 'Trappist-1f', 'Trappist-1g', 'Trappist-1h'],
+        facts: [
+          'Trappist-1 is an ultra-cool red dwarf star, much smaller and cooler than our Sun.',
+          'Three of its planets (e, f, and g) are in the habitable zone where liquid water could exist.',
+          'All seven planets are closer to their star than Mercury is to our Sun, yet some may still be habitable.'
+        ]
+      },
+      'HR 8799': {
+        lightYears: '129',
+        planets: ['HR 8799 b', 'HR 8799 c', 'HR 8799 d', 'HR 8799 e'],
+        facts: [
+          'HR 8799 was the first star system where multiple exoplanets were directly imaged, not just detected indirectly.',
+          'All four planets are gas giants, each more massive than Jupiter.',
+          'The star is only 30 million years old - a baby compared to our 4.6 billion year old Sun.'
+        ]
+      },
+      'Kepler-90': {
+        lightYears: '2,840',
+        planets: ['Kepler-90b', 'Kepler-90c', 'Kepler-90d', 'Kepler-90e', 'Kepler-90f', 'Kepler-90g', 'Kepler-90h', 'Kepler-90i'],
+        facts: [
+          'Kepler-90 has 8 confirmed planets, matching our Solar System\'s count.',
+          'The entire system fits within Earth\'s orbit around the Sun - it\'s incredibly compact!',
+          'Kepler-90i was discovered using machine learning AI, showing how technology helps find new worlds.'
+        ]
+      },
+      '55 Cancri': {
+        lightYears: '41',
+        planets: ['55 Cancri e', '55 Cancri b', '55 Cancri c', '55 Cancri f', '55 Cancri d'],
+        facts: [
+          '55 Cancri e is a "super-Earth" that may have a surface of diamond due to extreme pressure and carbon-rich composition.',
+          'The star 55 Cancri A is visible to the naked eye from Earth on a clear night.',
+          'Planet 55 Cancri e completes an orbit in just 18 hours - a year there is shorter than a day on Earth!'
+        ]
+      },
+      'WASP-12': {
+        lightYears: '871',
+        planets: ['WASP-12b'],
+        facts: [
+          'WASP-12b is one of the hottest exoplanets known, with surface temperatures exceeding 2,200°C (4,000°F).',
+          'The planet is being torn apart by its star\'s gravity, creating a comet-like tail of material.',
+          'WASP-12b is so close to its star that it completes an orbit in just 1.1 Earth days.'
+        ]
+      }
+    };
+    
+    // Solar system modal functions
+    function openSolarModal(systemName) {
+      const data = solarSystemData[systemName];
+      if (!data) return;
+      
+      document.getElementById('solarModalTitle').textContent = systemName;
+      
+      const infoHtml = `
+        <div class="solar-info-section">
+          <div class="solar-info-label">Light Years From Earth:</div>
+          <div class="solar-info-value">${data.lightYears} light years</div>
+        </div>
+        
+        <div class="solar-info-section">
+          <div class="solar-info-label">Planets:</div>
+          <ul class="solar-planets-list">
+            ${data.planets.map(planet => `<li>${planet}</li>`).join('')}
+          </ul>
+        </div>
+        
+        <div class="solar-info-section">
+          <div class="solar-info-label">Fun Facts:</div>
+          <ul class="solar-facts">
+            ${data.facts.map(fact => `<li>${fact}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+      
+      document.getElementById('solarModalInfo').innerHTML = infoHtml;
+      document.getElementById('solarModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSolarModal(event) {
+      if (event && event.target === event.currentTarget || !event) {
+        document.getElementById('solarModal').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    
+    // Add click detection for solar systems
+    function handleSolarSystemClick(event) {
+      console.log('Click detected on canvas!');
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      console.log('Click coordinates:', x, y);
+      console.log('Number of solar systems:', solarSystems ? solarSystems.length : 'undefined');
+      
+      // Check each solar system - only the star (sun) is clickable
+      for (let system of solarSystems) {
+        // Calculate distance from click to solar system center (where the star is)
+        const dx = x - system.x;
+        const dy = y - system.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Clickable radius - only the star itself with a small padding for easier clicking
+        // The star is drawn at system.starSize, so we make it slightly larger for clicking
+        const clickableRadius = system.starSize * 2.5 + 15; // Star size * 2.5 + small padding
+        
+        console.log(`Checking ${system.name}: distance=${distance.toFixed(1)}, clickableRadius=${clickableRadius.toFixed(1)}, system.x=${system.x.toFixed(1)}, system.y=${system.y.toFixed(1)}`);
+        
+        if (distance <= clickableRadius) {
+          console.log(`Clicked on ${system.name}! Opening modal...`);
+          openSolarModal(system.name);
+          break; // Only open one modal per click
+        }
+      }
+    }
+    
+    // Add click event listener to canvas
+    canvas.addEventListener('click', handleSolarSystemClick);
+    console.log('Click event listener added to canvas');
+    
+    // Close solar modal on Escape key (update existing listener)
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeDatapackModal();
+        closeSolarModal();
+      }
+    });
+    draw();
+  </script>
+
+  <!-- Solar System Info Modal -->
+  <div class="solar-modal-overlay" id="solarModal" onclick="closeSolarModal(event)">
+    <div class="solar-modal-content" onclick="event.stopPropagation()">
+      <div class="solar-modal-header">
+        <h2 class="solar-modal-title" id="solarModalTitle">Solar System</h2>
+        <button class="solar-modal-close" onclick="closeSolarModal()" aria-label="Close">&times;</button>
+      </div>
+      <div class="solar-info" id="solarModalInfo">
+        <!-- Content will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Astronaut Chat Bubble -->
+  <div class="astronaut-chat" id="astronautChat">
+    <div class="chat-bubble">*PSST*</div>
+  </div>
+
+</body>
