@@ -679,7 +679,7 @@
         {
           name: 'WASP-12',
           x: w * 0.5,
-          y: h * 0.9,  // Moved further down
+          y: h * 0.95,  // Moved further down
           starColor: '#ff6347',
           starSize: 9,
           planets: [
@@ -838,7 +838,8 @@
       
       // Bounce off cards
       const socialsBox = document.querySelector('.socials-box');
-      const serverCard = document.querySelector('.server-card') || document.querySelector('.minecraft-card');
+      const serverCard = document.querySelector('.mc-panel');
+      const astrozaarCard = document.querySelector('.astrozaar-panel');
       
       if (socialsBox) {
         const rect = socialsBox.getBoundingClientRect();
@@ -882,6 +883,26 @@
         }
       }
       
+      if (astrozaarCard) {
+        const rect = astrozaarCard.getBoundingClientRect();
+        if (finalX + margin > rect.left && finalX - margin < rect.right &&
+            finalY + margin > rect.top && finalY - margin < rect.bottom) {
+          const distLeft = Math.abs(finalX - rect.left);
+          const distRight = Math.abs(finalX - rect.right);
+          const distTop = Math.abs(finalY - rect.top);
+          const distBottom = Math.abs(finalY - rect.bottom);
+          const minDist = Math.min(distLeft, distRight, distTop, distBottom);
+          if (minDist === distLeft || minDist === distRight) {
+            astronaut.angle = Math.PI - astronaut.angle;
+          } else {
+            astronaut.angle = -astronaut.angle;
+          }
+          if (finalX < rect.left) finalX = rect.left - margin;
+          else if (finalX > rect.right) finalX = rect.right + margin;
+          if (finalY < rect.top) finalY = rect.top - margin;
+          else if (finalY > rect.bottom) finalY = rect.bottom + margin;
+        }
+      }
       astronaut.x = finalX;
       astronaut.y = finalY;
       astronaut.life++;
